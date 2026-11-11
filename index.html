@@ -81,7 +81,7 @@ header{background:var(--head);color:var(--head-text);display:flex;align-items:ce
 .planrow{display:flex;flex:1;min-height:0}
 .plan-scroll{flex:1;overflow:auto;padding:14px;display:flex}
 .ahu-frame{flex:1;width:100%;border:0;background:#fff;display:block}
-.doorpanel{flex:0 0 184px;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--panel-2);min-height:0}
+.doorpanel{flex:0 0 184px;display:flex;flex-direction:column;border-left:1px solid var(--line);background:var(--panel-2);min-height:0}
 .dp-h{font-size:12.5px;font-weight:700;padding:10px 12px 3px}
 .dp-cap{font-size:10.5px;color:var(--text-dim);padding:0 12px 8px;line-height:1.5}
 .dlist{flex:1;overflow:auto;padding:0 10px 10px;display:flex;flex-direction:column;gap:6px}
@@ -238,6 +238,7 @@ header .chip{font-size:13px;padding:5px 13px;font-weight:800}
 :root:not([data-theme="dark"]) .chip.alarm{background:#fde4e4;color:#b42020}
 :root:not([data-theme="dark"]) .chip.ok .dot{background:#17935a}
 /* Responsive */
+@media(max-width:900px){.planrow{flex-direction:column}.doorpanel{flex:0 0 auto;max-height:300px;border-left:0;border-top:1px solid var(--line)}.sig{position:static;text-align:right;padding:6px 16px 10px}}
 @media(max-width:1100px){
   body{overflow:auto;height:auto}
   .wrap{height:auto}
@@ -288,12 +289,12 @@ header .chip{font-size:13px;padding:5px 13px;font-weight:800}
       <div class="legend" id="legend"></div>
     </div>
     <div class="planrow" id="planRow">
+      <div class="plan-scroll" id="planScroll"><div class="plan" id="plan"></div></div>
       <div class="doorpanel" id="doorPanel" style="display:none">
         <div class="dp-h">도어 제어</div>
         <div class="dp-cap">문 열림/닫힘에 따라 해당 룸 차압이 변하는 과정을 볼 수 있습니다. (룸차압 전용)</div>
         <div class="dlist" id="doorList"></div>
       </div>
-      <div class="plan-scroll" id="planScroll"><div class="plan" id="plan"></div></div>
     </div>
     <iframe id="ahuFrame" class="ahu-frame" title="공조기-1 운전 화면" style="display:none"></iframe>
     <iframe id="ahuFrame2" class="ahu-frame" title="공조기-2 운전 화면" style="display:none"></iframe>
@@ -620,6 +621,7 @@ function setView(v){
   document.getElementById("ahuFrame2").style.display=v==="ahu2"?"block":"none";
   document.getElementById("legend").style.display=isAhu?"none":"flex";
   document.getElementById("sig").style.display=isAhu?"none":"block";
+  document.getElementById("sig").style.right=(v==="press")?"212px":"";  // 도어 제어 패널(우측)과 겹치지 않게
   document.getElementById("bottom").style.display=isAhu?"none":"flex";
   document.getElementById("doorPanel").style.display=(!isAhu&&v==="press")?"flex":"none";  // 도어 제어는 룸차압에만
   if(isAhu){
