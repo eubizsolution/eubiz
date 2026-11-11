@@ -243,6 +243,8 @@ header .chip{font-size:13px;padding:5px 13px;font-weight:800}
 /* 화면 높이가 낮을 때: 평면도 내부 스크롤 대신 페이지 전체가 스크롤 */
 @media(max-height:1000px){body{overflow:auto;height:auto}.wrap{height:auto}.plan{min-height:560px}.ahu-frame{min-height:760px}}
 @media(max-height:1000px) and (min-width:901px){.planrow{position:relative}.doorpanel{position:absolute;right:0;top:0;bottom:0;width:184px}.planrow.hasdoor .plan-scroll{margin-right:184px}}
+/* 공조기 탭(PC): 한 화면에 꽉 차게 — 스크롤 없이 남은 높이를 프레임이 채움 */
+@media(min-width:901px){body.view-ahu{overflow:hidden;height:100%}body.view-ahu .wrap{height:auto;flex:1;min-height:0}body.view-ahu .stage{min-height:0}body.view-ahu .ahu-frame{min-height:0}}
 @media(max-width:900px){.planrow{flex-direction:column}.doorpanel{flex:0 0 auto;max-height:300px;border-left:0;border-top:1px solid var(--line)}.sig{position:static;text-align:right;padding:6px 16px 10px}}
 @media(max-width:1100px){
   body{overflow:auto;height:auto}
@@ -623,6 +625,7 @@ function setView(v){
   const isAhu=(v==="ahu1"||v==="ahu2");
   document.getElementById("planRow").style.display=isAhu?"none":"flex";
   document.getElementById("planRow").classList.toggle("hasdoor",v==="press");
+  document.body.classList.toggle("view-ahu",isAhu);
   document.getElementById("ahuFrame").style.display=v==="ahu1"?"block":"none";
   document.getElementById("ahuFrame2").style.display=v==="ahu2"?"block":"none";
   document.getElementById("legend").style.display=isAhu?"none":"flex";
