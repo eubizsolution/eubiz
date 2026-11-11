@@ -359,31 +359,32 @@ const ROOMS=[
 /* ===== 문에 설치된 센서 (설치 위치에만) ===== */
 const SENSORS=[
   {id:"s1", room:"q39", side:"S", pos:50, dot:"th", t:22.7,h:40.4,p:18},
-  {id:"s2", room:"q33", side:"E", pos:50, dot:"th", t:22.7,h:37.8,p:16},
-  {id:"s3", room:"q37", side:"E", pos:40, dot:"th", t:21.6,h:40.2,p:15},
-  {id:"s4", room:"q28", side:"S", pos:35, dot:"th", t:22.0,h:39.1,p:20},
-  {id:"s5", room:"q29", side:"S", pos:55, dot:"th", t:22.3,h:38.9,p:18},
-  {id:"s6", room:"q24", side:"S", pos:50, dot:"th", t:21.4,h:39.0,p:8},
-  {id:"s7", room:"q21", side:"S", pos:50, dot:"th", t:22.6,h:38.4,p:8},
-  {id:"s8", room:"q05", side:"N", pos:50, dot:"th", t:22.6,h:39.5,p:12},
-  {id:"s9", room:"q03", side:"W", pos:40, dot:"th", t:21.5,h:40.0,p:25},
-  {id:"s10",room:"q16", side:"S", pos:50, dot:"th", t:22.9,h:39.5,p:14},
-  {id:"s11",room:"q12", side:"S", pos:50, dot:"th", t:23.1,h:38.0,p:14},
-  {id:"s12",room:"q09", side:"W", pos:50, dot:"th", t:22.1,h:39.5,p:16},
-  {id:"s13",room:"q10", side:"W", pos:50, dot:"th", t:24.0,h:40.0,p:14},
-  {id:"s14",room:"off", side:"N", pos:28, dot:"th", t:22.1,h:39.2,p:5},
-  {id:"s15",room:"q08", side:"S", pos:50, dot:"th", t:21.0,h:41.0,p:12},
+  {id:"s2", room:"q33", side:"E", pos:50, dot:"th", t:22.7,h:37.8,p:-8},
+  {id:"s3", room:"q37", side:"E", pos:40, dot:"th", t:21.6,h:40.2,p:22},
+  {id:"s4", room:"q28", side:"S", pos:35, dot:"th", t:22.0,h:39.1,p:-12},
+  {id:"s5", room:"q29", side:"S", pos:55, dot:"th", t:22.3,h:38.9,p:-8},
+  {id:"s6", room:"q24", side:"S", pos:50, dot:"th", t:21.4,h:39.0,p:10},
+  {id:"s7", room:"q21", side:"S", pos:50, dot:"th", t:22.6,h:38.4,p:10},
+  {id:"s8", room:"q05", side:"N", pos:50, dot:"th", t:22.6,h:39.5,p:-6},
+  {id:"s9", room:"q03", side:"W", pos:40, dot:"th", t:21.5,h:40.0,p:8},
+  {id:"s10",room:"q16", side:"S", pos:50, dot:"th", t:22.9,h:39.5,p:5},
+  {id:"s11",room:"q12", side:"S", pos:50, dot:"th", t:23.1,h:38.0,p:5},
+  {id:"s12",room:"q09", side:"W", pos:50, dot:"th", t:22.1,h:39.5,p:8},
+  {id:"s13",room:"q10", side:"W", pos:50, dot:"th", t:24.0,h:40.0,p:-8},
+  {id:"s14",room:"off", side:"N", pos:28, dot:"th", t:22.1,h:39.2,p:3},
+  {id:"s15",room:"q08", side:"S", pos:50, dot:"th", t:21.0,h:41.0,p:3},
 ];
 
 const UNIT={temp:"℃",humi:"%RH",press:"Pa"}, MEASNAME={temp:"온도",humi:"습도",press:"차압"};
-function defAlarms(m){
+function defAlarms(m,sp){
   if(m==="temp")return {hha:{use:true,sp:26,dly:5},ha:{use:true,sp:24,dly:5},la:{use:true,sp:20,dly:5},lla:{use:true,sp:18,dly:5}};
   if(m==="humi")return {hha:{use:true,sp:60,dly:5},ha:{use:true,sp:55,dly:5},la:{use:true,sp:35,dly:5},lla:{use:true,sp:30,dly:5}};
-  return {hha:{use:true,sp:30,dly:5},ha:{use:true,sp:25,dly:5},la:{use:true,sp:5,dly:5},lla:{use:true,sp:-5,dly:5}};
+  sp=sp||0;  // 차압: 설정값(양압/음압) 기준 상·하한
+  return {hha:{use:true,sp:sp+12,dly:5},ha:{use:true,sp:sp+8,dly:5},la:{use:true,sp:sp-8,dly:5},lla:{use:true,sp:sp-12,dly:5}};
 }
 /* 센서 상태 */
 const state=SENSORS.map(s=>{
-  const mk=(pv,meas)=>({pv,sp:pv,alarms:defAlarms(meas),level:"ok",_t:{hha:0,ha:0,la:0,lla:0},_active:null,_ack:false});
+  const mk=(pv,meas)=>({pv,sp:pv,alarms:defAlarms(meas,pv),level:"ok",_t:{hha:0,ha:0,la:0,lla:0},_active:null,_ack:false});
   const rm=ROOMS.find(r=>r.id===s.room)||{};
   return {def:s, roomName:rm.name||s.room, grade:rm.g, dooropen:0, doorHeld:false,
     temp:mk(s.t,"temp"), humi:mk(s.h,"humi"), press:mk(s.p,"press")};
@@ -425,7 +426,7 @@ function buildLegend(){
     `<span style="color:var(--accent);font-weight:700">Grade C ⟵ 공조기 PID 연동</span>`;
 }
 
-function fmt(m,v){return m==="humi"?Math.round(v):v.toFixed(1);}
+function fmt(m,v){if(m==="humi")return Math.round(v);const t=v.toFixed(1);return t==="-0.0"?"0.0":t;}
 function measList(){return view==="press"?["press"]:["temp","humi"];}
 function lvlText(l){return l==="crit"?"경고":(l==="warn"?"주의":"정상");}
 
@@ -459,7 +460,7 @@ function stepSim(){
       const st=s[m]; let tg=st.sp,k,noise;
       if(m==="temp"){k=.12;noise=gauss(.03);} else if(m==="humi"){k=.10;noise=gauss(.08);} else {k=.20;noise=gauss(.04);}
       if(door){
-        if(m==="press"){ tg=tg*0.15-2; k=.35; }            // 도어 열림 → 차압 급락(지속)
+        if(m==="press"){ tg=0; k=.35; noise=gauss(.012); }            // 도어 열림 → 차압 급락(지속)
         else if(s.dooropen>0){ tg+=(m==="temp"?3.2:16); k=.22; }  // 온습도는 순간 외란에만 반응
       }
       st.pv+=(tg-st.pv)*k+noise;
