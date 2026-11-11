@@ -594,12 +594,9 @@ function tickClock(){const d=new Date();document.getElementById("clock").textCon
 /* View */
 let ahuLoaded=false, ahu2Loaded=false;
 function ahuSrc(){const bin=atob(AHU_B64),bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));return new TextDecoder("utf-8").decode(bytes).split("빌딩 관리 시스템").join("BMS & EMS SYSTEM")
-    .split("<rect '+dk+' x=\"540\" y=\"95\" width=\"56\" height=\"115\"/>").join("<rect '+dk+' x=\"640\" y=\"95\" width=\"56\" height=\"115\"/>")
-    .split("<text class=\"lbl\" x=\"568\" y=\"40\" text-anchor=\"middle\">외 기</text><g id=\"aOut\" class=\"off\">'+arrowsD(541,54,2,'#8c8cf0')+arrowsD(569,54,2,'#8c8cf0')+'</g>").join("<text class=\"lbl\" x=\"668\" y=\"40\" text-anchor=\"middle\">외 기</text><g id=\"aOut\" class=\"off\">'+arrowsD(641,54,2,'#8c8cf0')+arrowsD(669,54,2,'#8c8cf0')+'</g>")
-    .split("topDamper(540,'obl','ai1')").join("topDamper(640,'obl','ai1')")
-    .split("<text class=\"lbl\" x=\"610\" y=\"96\">외기댐퍼</text>").join("<text class=\"lbl\" x=\"710\" y=\"96\">외기댐퍼</text>")
-    .split("vb('vod',610,102,70,").join("vb('vod',710,102,70,")
-    .split("<text class=\"lbl\" x=\"640\" y=\"144\" text-anchor=\"middle\">혼합 온도</text>'+vb('vmix',604,150,72,f1(u.mix)+' ℃')+probe(640,208,-90,36);").join("<text class=\"lbl\" x=\"584\" y=\"144\" text-anchor=\"middle\">혼합 온도</text>'+vb('vmix',548,150,72,f1(u.mix)+' ℃')+probe(584,208,-90,36);").split("'<text class=\"lbl\" x=\"920\" y=\"144\" text-anchor=\"middle\">노점 온도</text>'+vb('vdew',879,150,82,f1(u.dew)+' ℃')+probe(920,208,-90,36);").join("'<text class=\"lbl\" x=\"753\" y=\"144\" text-anchor=\"middle\">노점 온도</text>'+vb('vdew',712,150,82,f1(u.dew)+' ℃')+probe(753,208,-90,36);");}
+    .split("return {Tm:Tm,Ts:Ts,ws:wh}}").join("return {Tm:Tm,Ts:Ts,ws:wh,wc:wcl}}")
+    .split("u.mix=p.Tm;u.sup=[p.Ts,rhOf(p.Ts,p.ws)];u.dew=dewOf(p.ws);").join("u.mix=p.Tm;u.sup=[p.Ts,rhOf(p.Ts,p.ws)];u.dew=dewOf(p.wc);")
+    .split("nm:'노점 온도',u:'℃',v:function(u){return u.dew},d:TD}").join("nm:'노점 온도',u:'℃',v:function(u){return u.dew},d:[22,20,7,5]}").split("'<text class=\"lbl\" x=\"920\" y=\"144\" text-anchor=\"middle\">노점 온도</text>'+vb('vdew',879,150,82,f1(u.dew)+' ℃')+probe(920,208,-90,36);").join("'<text class=\"lbl\" x=\"753\" y=\"144\" text-anchor=\"middle\">노점 온도</text>'+vb('vdew',712,150,82,f1(u.dew)+' ℃')+probe(753,208,-90,36);");}
 function loadAhu(){
   if(ahuLoaded)return;
   document.getElementById("ahuFrame").srcdoc=ahuSrc();
